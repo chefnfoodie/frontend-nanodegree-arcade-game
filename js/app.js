@@ -5,12 +5,13 @@ var Enemy = function(x,y) {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-    //initial loc
+    // initial loc
     this.x = x;
     this.y = y;
     this.yValues = [80,160,240];
     this.speedMod = getRandomValue(150,500);
 };
+
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -19,16 +20,18 @@ Enemy.prototype.update = function(dt) {
     // all computers.
     this.x = this.x + this.speedMod * dt;
     if (this.x >505) {
-        this.resetEnemies();
+        this.reset();
     }
 };
 
-Enemy.prototype.resetEnemies = function () {
+// Reset the enemy to initial position if collision with player or on reaching water
+Enemy.prototype.reset = function () {
     this.x = -130 ;
     this.y = this.getRandomY();
     this.speedMod = getRandomValue(120,505);
 };
 
+// Generate random y axis values
 Enemy.prototype.getRandomY = function() {
     return this.yValues[Math.floor(Math.random() * this.yValues.length)];
 };
@@ -38,6 +41,7 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+// Generate random integer between max and min numbers
 function getRandomValue(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
@@ -45,7 +49,6 @@ function getRandomValue(min, max) {
 var Jewel = function() {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-
     // The image/sprite for our jewels, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/Gem-Orange.png';
@@ -66,12 +69,12 @@ Jewel.prototype.update = function() {
         // is the jewel on the same row as the player?
         if (jewel.y === player.y &&  jewel.x >= player.x - 30 &&  jewel.x <= player.x + 30) {
             player.jewelCounter += 1;
-            this.resetJewels();
+            this.reset();
         }
     }
 };
 
-Jewel.prototype.resetJewels = function () {
+Jewel.prototype.reset = function() {
     this.x = this.getRandomX();
     this.y = this.getRandomY();
 };
@@ -80,14 +83,13 @@ Jewel.prototype.getRandomY = function() {
     return this.yValues[Math.floor(Math.random() * this.yValues.length)];
 };
 
-Jewel.prototype.getRandomX = function () {
+Jewel.prototype.getRandomX = function() {
     return this.xValues[Math.floor(Math.random() * this.xValues.length)];
 };
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-
 var Player = function() {
     this.xRange = [-2, 402];
     this.yRange = [-20, 380];
@@ -103,16 +105,13 @@ Player.prototype.update = function() {
         //between the three rows and use the player variable to be accesed inside  allEnemies loop
         var player = this;
         allEnemies.forEach(function(enemy) {
-            // check if coordinates of enemy is on top of player
-            if (enemy.y === player.y &&  enemy.x >= player.x - 30 && enemy.x <= player.x + 30) {
-                  player.missCounter += 1;
-                  player.reset();
-            }
-
-});
-
-} else if (this.y == 0) {
-// if player reaches water, increase score and reset
+        // check if coordinates of enemy is on top of player
+        if (enemy.y === player.y &&  enemy.x >= player.x - 30 && enemy.x <= player.x + 30) {
+            player.missCounter += 1;
+            player.reset();
+        }});
+    } else if (this.y == 0) {
+        // if player reaches water, increase score and reset
         this.hitCounter += 1;
         this.reset();
     }
@@ -128,17 +127,21 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.handleInput = function(key) {
-    if (key === 'left') {
+    switch(key) {
+        case "left":
         this.x -= (this.x - 100 < this.xRange[0]) ? 0 : 100;
-    } else if (key === 'right') {
+        break;
+        case "right":
         this.x += (this.x + 100> this.xRange[1]) ? 0 : 100;
-    } else if (key === 'up') {
+        break;
+        case "up":
         this.y -= (this.y - 80 < this.yRange[0]) ? 0 : 80;
-    } else if (key === 'down') {
+        break;
+        case "down":
         this.y += (this.y + 80 > this.yRange[1]) ? 0 : 80;
+        break;
     }
 };
-
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -149,7 +152,6 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-
     player.handleInput(allowedKeys[e.keyCode]);
 });
 
@@ -160,14 +162,8 @@ var allEnemies = [];
 allEnemies[0] = new Enemy(-100,80);
 allEnemies[1] = new Enemy(-200,160);
 allEnemies[2] = new Enemy(-250,240);
-
 var jewel = new Jewel();
 var player = new Player();
-
-//button to start the button
-function enableButton() {
-    document.getElementById('startButton').disabled = false;
-}
 
 // fn : a timed game and show the score with hits, misses and no. of jewels acquired
 function startTime(gameStartTime, resetCounterFlag) {
@@ -197,7 +193,7 @@ function startTime(gameStartTime, resetCounterFlag) {
         var formattedPlaytime = formatMillisecondsToStr(differenceInMillisecs);
         document.getElementById('gameTime').innerHTML = "Play Time: " + formattedPlaytime;
         var t = setTimeout(function(){startTime(gameStartTime, false)},1);
-        var total = player.hitCounter + player.jewelCounter;
+        total = player.hitCounter + player.jewelCounter;
         document.getElementById('hitCounter').innerHTML = "Score: " + total;
         document.getElementById('missCounter').innerHTML = "Misses: " + player.missCounter;
     }
@@ -210,7 +206,6 @@ function checkEndingNumber(value) {
     else
         return '';
 }
-
 
 // generic function to convert milliseconds into a string in "years days hours minutes seconds" format
 // in this game used for seconds
