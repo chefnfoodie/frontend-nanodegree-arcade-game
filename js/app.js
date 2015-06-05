@@ -110,7 +110,7 @@ Player.prototype.update = function() {
             player.missCounter += 1;
             player.reset();
         }});
-    } else if (this.y == 0) {
+    } else if (this.y === 0) {
         // if player reaches water, increase score and reset
         this.hitCounter += 1;
         this.reset();
@@ -174,15 +174,18 @@ function startTime(gameStartTime, resetCounterFlag) {
         player.missCounter = 0;
         player.jewelCounter = 0;
     }
+    var total;
+    var formattedPlaytime;
+    var t;
     var currentTime = new Date();
     // time playing the game is the difference of the start time from current time
     var differenceInMillisecs = currentTime.getTime() - gameStartTime.getTime();
     // if time playing the game exceeds 30 secs show score and enable starting the game again
     if(differenceInMillisecs/1000 > 30) {
         window.alert("Game over");
-        var formattedPlaytime = formatMillisecondsToStr(differenceInMillisecs);
+        formattedPlaytime = formatMillisecondsToStr(differenceInMillisecs);
         document.getElementById('gameTime').innerHTML = "Play Time: " + formattedPlaytime;
-        var total = player.hitCounter + player.jewelCounter;
+        total = player.hitCounter + player.jewelCounter;
         document.getElementById('hitCounter').innerHTML = "Score: " + total;
         document.getElementById('missCounter').innerHTML = "Misses: " + player.missCounter;
         document.getElementById('startButton').disabled = false;
@@ -190,9 +193,9 @@ function startTime(gameStartTime, resetCounterFlag) {
     // if game is on disable start button,
     else {
         document.getElementById('startButton').disabled = true;
-        var formattedPlaytime = formatMillisecondsToStr(differenceInMillisecs);
+        formattedPlaytime = formatMillisecondsToStr(differenceInMillisecs);
         document.getElementById('gameTime').innerHTML = "Play Time: " + formattedPlaytime;
-        var t = setTimeout(function(){startTime(gameStartTime, false)},1);
+        t = setTimeout(function(){startTime(gameStartTime, false);},1);
         total = player.hitCounter + player.jewelCounter;
         document.getElementById('hitCounter').innerHTML = "Score: " + total;
         document.getElementById('missCounter').innerHTML = "Misses: " + player.missCounter;
@@ -226,13 +229,13 @@ function formatMillisecondsToStr (milliseconds) {
     }
     var minutes = Math.floor((temp %= 3600) / 60);
     if (minutes) {
-        fomattedTime += minutes + ' minute' + checkEndingNumber(minutes) + ' ' ;
+        fomattedTime += minutes + ' minute' + checkEndingNumber(minutes) + ' ';
     }
     var seconds = temp % 60;
     if (seconds) {
-        fomattedTime += seconds + ' second' + checkEndingNumber(seconds) + ' ' ;
+        fomattedTime += seconds + ' second' + checkEndingNumber(seconds) + ' ';
     }
-    return fomattedTime ;
+    return fomattedTime;
 }
 
 

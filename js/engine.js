@@ -52,7 +52,7 @@ var Engine = (function(global) {
         * function again as soon as the browser is able to draw another frame.
         * */
         win.requestAnimationFrame(main);
-    };
+    }
 
     /* This function does some initial setup that should only occur once,
     * particularly setting the lastTime variable that is required for the
@@ -65,7 +65,7 @@ var Engine = (function(global) {
         function enableButton() {
             document.getElementById("startButton").disabled = false;
             document.getElementById("startButton").addEventListener('click',function() {
-                startTime(new Date(),true)
+                startTime(new Date(),true);
             });
         }
     }
